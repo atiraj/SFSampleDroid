@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
@@ -80,18 +84,25 @@ public class Main extends Activity implements OnClickListener {
 			// Creating HTTP client
 	        //HttpClient httpClient = createHttpClient();
 			 HttpClient httpClient = new DefaultHttpClient();
-	         
+			 URI uri=null;
 	        // Creating HTTP Post
-	        HttpGet httpPost = new HttpGet(baseUrl + url);
-	        HttpParams params=httpClient.getParams();
+	       // HttpGet httpPost = new HttpGet(baseUrl + url);
+			 
+	        //HttpParams params=httpClient.getParams();
 	        
-	        for(NameValuePair nvp:nameValuePair)
-	        {
-	        	params.setParameter(nvp.getName(), nvp.getValue());
+	        //for(NameValuePair nvp:nameValuePair)
+	        //{
+	        	//params.setParameter(nvp.getName(), nvp.getValue());
 	        	
-	        }
+	        //}
 	        //try {
-	        	
+	        	try {
+					 uri = new URI( baseUrl+url + "?" + URLEncodedUtils.format( nameValuePair, "utf-8" ));
+				} catch (URISyntaxException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+	        	HttpUriRequest httpPost = new HttpGet(uri);
 	        	httpPost.setHeader("Authorization", "OAuth " + token);
 	            //httpPost.setParams(params);
 	            
@@ -236,7 +247,7 @@ public class Main extends Activity implements OnClickListener {
 			String accounts="";
 			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(5);
 			String url="";
-			nameValuePair.add(new BasicNameValuePair("q",URLEncoder.encode("SELECT FirstName FROM Account","UTF-8")));
+			nameValuePair.add(new BasicNameValuePair("q","SELECT Name FROM Account"));
 			JSONArray jsonArray=postArray(nameValuePair,"/services/data/v20.0/query",token);
 			try {
 				for (int i = 0; i < jsonArray.length(); i++) {
