@@ -75,7 +75,7 @@ public class Main extends Activity implements OnClickListener {
 	        return builder.toString();
 	    }
 		
-		protected JSONArray postArray(List<NameValuePair> nameValuePair,String url,String token)
+		protected JSONObject postArray(List<NameValuePair> nameValuePair,String url,String token)
 		{
 			JSONArray jsonArray=null;
 			JSONObject jObj=null;
@@ -137,7 +137,7 @@ public class Main extends Activity implements OnClickListener {
 	        
 			
 				try {
-					jsonArray = new JSONArray(strResponse);
+					jObj=new JSONObject(strResponse);
 					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -145,7 +145,7 @@ public class Main extends Activity implements OnClickListener {
 				}
 				
 				//return jsonArray;
-				return jsonArray;
+				return jObj;
 		}
 		
 		protected JSONObject post(List<NameValuePair> nameValuePair,String url,String token)
@@ -248,8 +248,10 @@ public class Main extends Activity implements OnClickListener {
 			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(5);
 			String url="";
 			nameValuePair.add(new BasicNameValuePair("q","SELECT Name FROM Account"));
-			JSONArray jsonArray=postArray(nameValuePair,"/services/data/v20.0/query",token);
+			JSONObject jObj=postArray(nameValuePair,"/services/data/v20.0/query",token);
+			JSONArray jsonArray=null;
 			try {
+				jsonArray=jObj.getJSONArray("records");
 				for (int i = 0; i < jsonArray.length(); i++) {
 		            JSONObject jsonObject = jsonArray.getJSONObject(i);
 		            accounts += " ; " + (String) jsonObject.get("Name");
